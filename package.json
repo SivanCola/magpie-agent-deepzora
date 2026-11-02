@@ -1,0 +1,16 @@
+{
+  "name": "@sivancola/magpie-agent-deepzora",
+  "version": "0.1.0",
+  "description": "Deepzora Agent plugin for Magpie, with a reversible TOML configuration bridge",
+  "type": "module",
+  "main": "./index.mjs",
+  "files": ["index.mjs", "deepzora.agent.js", "bridge.mjs", "cli.mjs", "README.md", "LICENSE"],
+  "bin": { "magpie-deepzora": "./cli.mjs" },
+  "scripts": { "test": "node --test test/*.test.mjs", "test:magpie": "node scripts/acceptance.mjs", "check": "node --check bridge.mjs && node --check index.mjs && node --check deepzora.agent.js" },
+  "engines": { "node": ">=20" },
+  "dependencies": { "dotenv": "18.0.9", "smol-toml": "1.9.1" },
+  "keywords": ["magpie", "magpie-plugin", "magpie-agent", "deepzora"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/SivanCola/magpie-agent-deepzora.git" },
+  "magpie": { "name": "Deepzora", "agent": "./deepzora.agent.js" }
+}
