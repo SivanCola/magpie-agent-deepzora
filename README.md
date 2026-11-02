@@ -22,6 +22,9 @@ github:SivanCola/magpie-agent-deepzora
 安装的是整个包：它同时包含 Agent 入口和配置桥接，不能只安装单个
 `deepzora.agent.js` 文件。依赖由 Magpie 安装，不需要额外启动服务。
 
+`0.1.1` 起，插件列表和 Agent 页均内嵌 Deepzora 图标，不依赖外部图片地址。
+已安装旧版时，在 Magpie 的已安装插件页更新此插件即可。
+
 1. 在 **Agent → Deepzora** 中选择 Magpie 模型。
 2. 保持 Magpie 运行，等待约一秒完成桥接。
 3. 重启 Deepzora 并新建会话。CLI、ACP 和 Desktop 共享此配置。
@@ -142,4 +145,6 @@ merges unrelated edits. Backups contain credentials and must stay private.
 The default paths target macOS/Linux; for Windows or a custom Deepzora home,
 clone the repo, edit the descriptor's `dir` and `config`, then install that folder.
 
-MIT. Independent integration; not an official Magpie community package.
+Plugin code: MIT. Embedded Deepzora icon: AGPL-3.0-only; see
+[asset notice](ASSET_NOTICE.md). Independent integration; not an official Magpie
+community package.
