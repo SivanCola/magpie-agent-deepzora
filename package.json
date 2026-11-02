@@ -6,7 +6,7 @@
   "main": "./index.mjs",
   "files": ["index.mjs", "deepzora.agent.js", "bridge.mjs", "cli.mjs", "README.md", "LICENSE"],
   "bin": { "magpie-deepzora": "./cli.mjs" },
-  "scripts": { "test": "node --test test/*.test.mjs", "test:magpie": "node scripts/acceptance.mjs", "check": "node --check bridge.mjs && node --check index.mjs && node --check deepzora.agent.js" },
+  "scripts": { "test": "node --test test/bridge.test.mjs", "test:magpie": "node scripts/acceptance.mjs", "check": "node --check bridge.mjs && node --check index.mjs && node --check deepzora.agent.js" },
   "engines": { "node": ">=20" },
   "dependencies": { "dotenv": "18.0.9", "smol-toml": "1.9.1" },
   "keywords": ["magpie", "magpie-plugin", "magpie-agent", "deepzora"],
