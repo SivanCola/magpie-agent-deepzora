@@ -1,6 +1,6 @@
 {
   "name": "@sivancola/magpie-agent-deepzora",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Deepzora Agent plugin for Magpie, with a reversible TOML configuration bridge",
   "type": "module",
   "main": "./index.mjs",
