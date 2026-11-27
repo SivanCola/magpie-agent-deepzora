@@ -12,10 +12,41 @@ export const KEY = "MAGPIE_DEEPZORA_API_KEY"
 const active = new Map()
 const parse = (text) => parseTOML(text || "", { integersAsBigInt: "asNeeded" })
 
-export function pathsFor(home = os.homedir()) {
-  const control = agent.config.replace(/^~(?=\/|$)/, home)
-  if (!path.isAbsolute(control)) throw new Error("Agent config must name an absolute path or ~/ path")
-  const deepzora = path.dirname(control)
+// The agent descriptor is compiled by Magpie's sandboxed JS runtime, which
+// expands only `~` and `$VAR`. The companion bridge runs in Bun and repeats
+// that expansion so the control file lands in the same place. Deepzora's own
+// config home is resolved separately: an explicit override wins, then the
+// platform default. The control file stays in the agent's home while TOML,
+// credentials and bridge state go into the real Deepzora home.
+export function expandAgentPath(value, { env = process.env, home = os.homedir() } = {}) {
+  const expanded = String(value || "")
+    .replace(/^~(?=[/\\]|$)/, home)
+    .replace(/\$(?:([A-Za-z_][A-Za-z0-9_]*)|\{([A-Za-z_][A-Za-z0-9_]*)\})/g, (_, bare, braced) => {
+      const name = bare || braced
+      return name === "HOME" ? home : (env[name] ?? "")
+    })
+  if (!path.isAbsolute(expanded)) throw new Error("Agent config must resolve to an absolute path via ~, $HOME or another absolute variable")
+  return path.normalize(expanded)
+}
+
+export function resolveDeepzoraHome({ env = process.env, platform = process.platform, home = os.homedir() } = {}) {
+  const override = env.DEEPZORA_HOME
+  if (typeof override === "string" && override.trim()) return expandAgentPath(override, { env, home })
+  if (platform === "win32") {
+    const appdata = env.APPDATA
+    if (typeof appdata === "string" && appdata.trim()) return path.join(expandAgentPath(appdata, { env, home }), "deepzora")
+    return path.join(home, "AppData", "Roaming", "deepzora")
+  }
+  return path.join(home, ".deepzora")
+}
+
+export function pathsFor(options = os.homedir()) {
+  const opts = typeof options === "string" ? { home: options } : options
+  const env = opts.env ?? process.env
+  const platform = opts.platform ?? process.platform
+  const home = opts.home ?? os.homedir()
+  const control = expandAgentPath(agent.config, { env, home })
+  const deepzora = resolveDeepzoraHome({ env, platform, home })
   return {
     control,
     config: path.join(deepzora, "config.toml"),

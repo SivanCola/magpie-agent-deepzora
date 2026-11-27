@@ -78,27 +78,23 @@ magpie plugin rm github:SivanCola/magpie-agent-deepzora
 断开会恢复原始注释与排版。若发生其他编辑，按字段合并恢复，注释排版不保证。
 `.magpie-bridge/` 含原始凭据备份，请按私密配置保管。
 
-## 自定义目录与 Windows
+## 配置目录解析
 
-默认路径面向 macOS/Linux。Windows 或使用自定义 `DEEPZORA_HOME` 时，先克隆
-本仓库，再修改 `deepzora.agent.js` 的 `dir` 和 `config`：
+`deepzora.agent.js` 的 `dir` 和 `config` 始终使用 `~/.deepzora`，这是 Magpie
+存放 Agent 控制文件 `magpie-agent.json` 的目录，两者必须指向同一目录。桥接在
+Bun 运行时中独立解析 Deepzora 的数据目录，按以下顺序选择：
 
-```js
-dir: "C:/Users/you/AppData/Roaming/deepzora",
-config: "C:/Users/you/AppData/Roaming/deepzora/magpie-agent.json",
-```
+1. `DEEPZORA_HOME`：若设置为绝对路径，直接使用，与 Deepzora 自身的覆盖变量一致。
+2. Windows：`%APPDATA%/deepzora`；`APPDATA` 缺失时回退到
+   `<home>/AppData/Roaming/deepzora`。
+3. macOS/Linux：`~/.deepzora`。
 
-两者必须指向同一个实际 Deepzora 数据目录。配置桥接根据 Agent 的 `config`
-定位 TOML 和 `.env`，不会猜测另一个应用进程的环境变量。然后安装本地文件夹：
+`config.toml`、全局 `.env` 和 `.magpie-bridge/` 写在解析出的 Deepzora 目录，
+而不是控制文件所在目录。因此不再需要为 Windows 克隆后手改 descriptor。如果
+Deepzora 是用自定义的 `DEEPZORA_HOME` 启动的，请让启动 Magpie 的环境也能看到
+同名变量；桥接不会猜测另一个进程独有的环境变量。
 
-```sh
-git clone https://github.com/SivanCola/magpie-agent-deepzora.git
-cd magpie-agent-deepzora
-# 调整路径后：
-magpie plugin add .
-```
-
-原生 Windows Magpie/Desktop 尚未实测；跨平台配置逻辑由 CI 测试。
+原生 Windows Magpie/Desktop 尚未实测；路径解析与跨平台配置逻辑由 CI 测试覆盖。
 
 ## 开发与验证
 
